@@ -13,9 +13,14 @@ struct Record {
     adco: String,
     optarif: String,
     isousc: u8,
-    hchc: u64,
-    hchp: u64,
+    hcjb: u64,
+    hpjb: u64,
+    hcjw: u64,
+    hpjw: u64,
+    hcjr: u64,
+    hpjr: u64,
     ptec: String,
+    demain: String,
     iinst: u8,
     imax: u8,
     papp: u16,
@@ -29,9 +34,14 @@ impl Record {
             r"\x0aADCO (?P<adco>\d+) .\x0d",
             r"\x0aOPTARIF (?P<optarif>.+) .\x0d",
             r"\x0aISOUSC (?P<isousc>\d+) .\x0d",
-            r"\x0aHCHC (?P<hchc>\d+) .\x0d",
-            r"\x0aHCHP (?P<hchp>\d+) .\x0d",
+            r"\x0aBBRHCJB (?P<hcjb>\d+) .\x0d",
+            r"\x0aBBRHPJB (?P<hpjb>\d+) .\x0d",
+            r"\x0aBBRHCJW (?P<hcjw>\d+) .\x0d",
+            r"\x0aBBRHPJW (?P<hpjw>\d+) .\x0d",
+            r"\x0aBBRHCJR (?P<hcjr>\d+) .\x0d",
+            r"\x0aBBRHPJR (?P<hpjr>\d+) .\x0d",
             r"\x0aPTEC (?P<ptec>.+) .\x0d",
+            r"\x0aDEMAIN (?P<demain>.+) .\x0d",
             r"\x0aIINST (?P<iinst>\d+) .\x0d",
             r"\x0aIMAX (?P<imax>\d+) .\x0d",
             r"\x0aPAPP (?P<papp>\d+) .\x0d",
@@ -43,16 +53,21 @@ impl Record {
         let adco = captures.name("adco").unwrap().as_str().to_owned();
         let optarif = captures.name("optarif").unwrap().as_str().to_owned();
         let isousc: u8 = captures.name("isousc").unwrap().as_str().parse::<u8>().unwrap();
-        let hchc: u64 = captures.name("hchc").unwrap().as_str().parse::<u64>().unwrap();
-        let hchp: u64 = captures.name("hchp").unwrap().as_str().parse::<u64>().unwrap();
+        let hcjb: u64 = captures.name("hcjb").unwrap().as_str().parse::<u64>().unwrap();
+        let hpjb: u64 = captures.name("hpjb").unwrap().as_str().parse::<u64>().unwrap();
+        let hcjw: u64 = captures.name("hcjw").unwrap().as_str().parse::<u64>().unwrap();
+        let hpjw: u64 = captures.name("hpjw").unwrap().as_str().parse::<u64>().unwrap();
+        let hcjr: u64 = captures.name("hcjr").unwrap().as_str().parse::<u64>().unwrap();
+        let hpjr: u64 = captures.name("hpjr").unwrap().as_str().parse::<u64>().unwrap();
         let ptec = captures.name("ptec").unwrap().as_str().to_owned();
+        let demain = captures.name("demain").unwrap().as_str().to_owned();
         let iinst: u8 = captures.name("iinst").unwrap().as_str().parse::<u8>().unwrap();
         let imax: u8 = captures.name("imax").unwrap().as_str().parse::<u8>().unwrap();
         let papp: u16 = captures.name("papp").unwrap().as_str().parse::<u16>().unwrap();
         let hhphc = captures.name("hhphc").unwrap().as_str().to_owned();
         let motdetat = captures.name("motdetat").unwrap().as_str().to_owned();
 
-        Record { adco, optarif, isousc, hchc, hchp, ptec, iinst, imax, papp, hhphc, motdetat }
+        Record { adco, optarif, isousc, hcjb, hpjb, hcjw, hpjw, hcjr, hpjr, ptec, demain, iinst, imax, papp, hhphc, motdetat }
     }
 
     fn to_json(&self) -> String {
