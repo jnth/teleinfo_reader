@@ -1,12 +1,13 @@
-use serialport::prelude::*;
-use std::time::Duration;
-use std::io;
-use regex::Regex;
-use serde_json;
 use clap::{App, Arg};
 use log::debug;
+use regex::Regex;
+use serde_json;
+use serialport::prelude::*;
+use std::io;
+use std::time::Duration;
 
-#[macro_use] extern crate serde_derive;
+#[macro_use]
+extern crate serde_derive;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Record {
@@ -47,27 +48,121 @@ impl Record {
             r"\x0aPAPP (?P<papp>\d+) .\x0d",
             r"\x0aHHPHC (?P<hhphc>.+) .\x0d",
             r"\x0aMOTDETAT (?P<motdetat>.+) .\x0d",
-        )).expect("Invalid regex");
-        let captures = re.captures(string.as_str()).expect("Cannot captures data with the regex");
+        ))
+        .expect("Invalid regex");
+        let captures = re
+            .captures(string.as_str())
+            .expect("Cannot captures data with the regex");
 
-        let adco = captures.name("adco").expect("Cannot get 'adco' value with the regex").as_str().to_owned();
-        let optarif = captures.name("optarif").expect("Cannot get 'optarif' value with the regex").as_str().to_owned();
-        let isousc: u8 = captures.name("isousc").expect("Cannot get 'isousc' value with the regex").as_str().parse::<u8>().expect("Invalid value of 'isousc'");
-        let hcjb: u64 = captures.name("hcjb").expect("Cannot get 'hcjb' value with the regex").as_str().parse::<u64>().expect("Invalid value of 'hcjb'");
-        let hpjb: u64 = captures.name("hpjb").expect("Cannot get 'hpjb' value with the regex").as_str().parse::<u64>().expect("Invalid value of 'hpjb'");
-        let hcjw: u64 = captures.name("hcjw").expect("Cannot get 'hcjw' value with the regex").as_str().parse::<u64>().expect("Invalid value of 'hcjw'");
-        let hpjw: u64 = captures.name("hpjw").expect("Cannot get 'hpjw' value with the regex").as_str().parse::<u64>().expect("Invalid value of 'hpjw'");
-        let hcjr: u64 = captures.name("hcjr").expect("Cannot get 'hcjr' value with the regex").as_str().parse::<u64>().expect("Invalid value of 'hcjr'");
-        let hpjr: u64 = captures.name("hpjr").expect("Cannot get 'hpjr' value with the regex").as_str().parse::<u64>().expect("Invalid value of 'hpjr'");
-        let ptec = captures.name("ptec").expect("Cannot get 'ptec' value with the regex").as_str().to_owned();
-        let demain = captures.name("demain").expect("Cannot get 'demain' value with the regex").as_str().to_owned();
-        let iinst: u8 = captures.name("iinst").expect("Cannot get 'iinst' value with the regex").as_str().parse::<u8>().expect("Invalid value of 'iinst'");
-        let imax: u8 = captures.name("imax").expect("Cannot get 'imax' value with the regex").as_str().parse::<u8>().expect("Invalid value of 'imax'");
-        let papp: u16 = captures.name("papp").expect("Cannot get 'papp' value with the regex").as_str().parse::<u16>().expect("Invalid value of 'papp'");
-        let hhphc = captures.name("hhphc").expect("Cannot get 'hhphc' value with the regex").as_str().to_owned();
-        let motdetat = captures.name("motdetat").expect("Cannot get 'motdetat' value with the regex").as_str().to_owned();
+        let adco = captures
+            .name("adco")
+            .expect("Cannot get 'adco' value with the regex")
+            .as_str()
+            .to_owned();
+        let optarif = captures
+            .name("optarif")
+            .expect("Cannot get 'optarif' value with the regex")
+            .as_str()
+            .to_owned();
+        let isousc: u8 = captures
+            .name("isousc")
+            .expect("Cannot get 'isousc' value with the regex")
+            .as_str()
+            .parse::<u8>()
+            .expect("Invalid value of 'isousc'");
+        let hcjb: u64 = captures
+            .name("hcjb")
+            .expect("Cannot get 'hcjb' value with the regex")
+            .as_str()
+            .parse::<u64>()
+            .expect("Invalid value of 'hcjb'");
+        let hpjb: u64 = captures
+            .name("hpjb")
+            .expect("Cannot get 'hpjb' value with the regex")
+            .as_str()
+            .parse::<u64>()
+            .expect("Invalid value of 'hpjb'");
+        let hcjw: u64 = captures
+            .name("hcjw")
+            .expect("Cannot get 'hcjw' value with the regex")
+            .as_str()
+            .parse::<u64>()
+            .expect("Invalid value of 'hcjw'");
+        let hpjw: u64 = captures
+            .name("hpjw")
+            .expect("Cannot get 'hpjw' value with the regex")
+            .as_str()
+            .parse::<u64>()
+            .expect("Invalid value of 'hpjw'");
+        let hcjr: u64 = captures
+            .name("hcjr")
+            .expect("Cannot get 'hcjr' value with the regex")
+            .as_str()
+            .parse::<u64>()
+            .expect("Invalid value of 'hcjr'");
+        let hpjr: u64 = captures
+            .name("hpjr")
+            .expect("Cannot get 'hpjr' value with the regex")
+            .as_str()
+            .parse::<u64>()
+            .expect("Invalid value of 'hpjr'");
+        let ptec = captures
+            .name("ptec")
+            .expect("Cannot get 'ptec' value with the regex")
+            .as_str()
+            .to_owned();
+        let demain = captures
+            .name("demain")
+            .expect("Cannot get 'demain' value with the regex")
+            .as_str()
+            .to_owned();
+        let iinst: u8 = captures
+            .name("iinst")
+            .expect("Cannot get 'iinst' value with the regex")
+            .as_str()
+            .parse::<u8>()
+            .expect("Invalid value of 'iinst'");
+        let imax: u8 = captures
+            .name("imax")
+            .expect("Cannot get 'imax' value with the regex")
+            .as_str()
+            .parse::<u8>()
+            .expect("Invalid value of 'imax'");
+        let papp: u16 = captures
+            .name("papp")
+            .expect("Cannot get 'papp' value with the regex")
+            .as_str()
+            .parse::<u16>()
+            .expect("Invalid value of 'papp'");
+        let hhphc = captures
+            .name("hhphc")
+            .expect("Cannot get 'hhphc' value with the regex")
+            .as_str()
+            .to_owned();
+        let motdetat = captures
+            .name("motdetat")
+            .expect("Cannot get 'motdetat' value with the regex")
+            .as_str()
+            .to_owned();
 
-        Record { adco, optarif, isousc, hcjb, hpjb, hcjw, hpjw, hcjr, hpjr, ptec, demain, iinst, imax, papp, hhphc, motdetat }
+        Record {
+            adco,
+            optarif,
+            isousc,
+            hcjb,
+            hpjb,
+            hcjw,
+            hpjw,
+            hcjr,
+            hpjr,
+            ptec,
+            demain,
+            iinst,
+            imax,
+            papp,
+            hhphc,
+            motdetat,
+        }
     }
 
     fn to_json(&self) -> String {
@@ -85,15 +180,19 @@ fn main() {
             Arg::with_name("device")
                 .help("Path of serial device")
                 .required(true)
-                .index(1))
+                .index(1),
+        )
         .arg(
             Arg::with_name("verbose")
                 .help("Verbose mode")
                 .short("v")
-                .takes_value(false))
+                .takes_value(false),
+        )
         .get_matches();
 
-    let device = matches.value_of("device").expect("Cannot read 'device' parameter from arguments");
+    let device = matches
+        .value_of("device")
+        .expect("Cannot read 'device' parameter from arguments");
     let verbose = matches.is_present("verbose");
     let baud_rate = 1200;
 
@@ -121,20 +220,20 @@ fn main() {
                             debug!("get start character of a record");
                             serial_data.clear();
                             started = true;
-                        }
-                        else if c == &3 && started {
+                        } else if c == &3 && started {
                             debug!("get end of record character");
-                            let record: Record = Record::from_string(String::from_utf8_lossy(&serial_data).into_owned());
+                            let record: Record = Record::from_string(
+                                String::from_utf8_lossy(&serial_data).into_owned(),
+                            );
                             if verbose {
                                 println!("get record: {:?}", record);
                             }
-                            // println!("{}", record.to_json());
-                        }
-                        else {
+                        // println!("{}", record.to_json());
+                        } else {
                             serial_data.push(*c);
                         }
                         // println!("{:?}", &serial_buf[..t]);
-                    },
+                    }
                     Err(ref e) if e.kind() == io::ErrorKind::TimedOut => (),
                     Err(e) => eprintln!("{:?}", e),
                 }
@@ -145,5 +244,4 @@ fn main() {
             ::std::process::exit(1);
         }
     }
-
 }
