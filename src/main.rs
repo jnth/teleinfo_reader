@@ -5,6 +5,7 @@ use serde_json;
 use serialport::prelude::*;
 use std::io;
 use std::time::Duration;
+use postgres::{Client, NoTls};
 
 #[macro_use]
 extern crate serde_derive;
@@ -193,11 +194,21 @@ fn main() {
                 .short("v")
                 .takes_value(false),
         )
+        .arg(
+            Arg::with_name("postgres_dsn")
+                .help("PostgreSQL Data Source Name")
+                .short("d")
+                .long("--dsn")
+                .required(true),
+        )
         .get_matches();
 
     let device = matches
         .value_of("device")
         .expect("Cannot read 'device' parameter from arguments");
+    let pg_dsn = matches.
+        value_of("postgres_dsn")
+        .expect("Cannot read 'postgres_dsn' parameter from arguments");
     let verbose = matches.is_present("verbose");
     let baud_rate = 1200;
 
@@ -215,6 +226,8 @@ fn main() {
             let mut serial_buf: Vec<u8> = vec![0; 1];
             let mut serial_data: Vec<u8> = Vec::new();
             let mut started: bool = false;
+
+            let mut pg = Client::connect(pg_dsn, NoTls).expect("Cannot connect to PostgreSQL database");
 
             println!("Listening data on {} at baud {}", &device, &baud_rate);
             loop {
