@@ -4,7 +4,7 @@ use regex::Regex;
 use serde_json;
 use serialport::prelude::*;
 use std::io;
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 use postgres::{Client, NoTls};
 
 #[macro_use]
@@ -12,6 +12,7 @@ extern crate serde_derive;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Record {
+    dt: SystemTime,
     adco: String,
     optarif: String,
     isousc: u8,
@@ -145,6 +146,7 @@ impl Record {
                     .to_owned();
 
                 Some(Record {
+                    dt: SystemTime::now(),
                     adco,
                     optarif,
                     isousc,
