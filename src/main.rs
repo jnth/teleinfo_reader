@@ -231,7 +231,8 @@ fn main() {
             let mut serial_data: Vec<u8> = Vec::new();
             let mut started: bool = false;
 
-            let mut pg = Client::connect(&pg_dsn, NoTls).expect("Cannot connect to PostgreSQL database");
+            let mut pg = Client::connect(&pg_dsn, NoTls)
+                .expect(&format!("Cannot connect to PostgreSQL database {}@{}:{}/{}", pg_user, pg_host, pg_port, pg_dbname));
 
             println!("Listening data on {} at baud {}", &device, &baud_rate);
             loop {
