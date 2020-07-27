@@ -1,8 +1,10 @@
 use clap::{App, Arg};
 use log::{debug, warn};
+use dotenv::dotenv;
 use regex::Regex;
 use serde_json;
 use serialport::prelude::*;
+use std::env;
 use std::io;
 use std::time::{Duration, SystemTime};
 use postgres::{Client, NoTls};
@@ -179,6 +181,16 @@ impl Record {
 }
 
 fn main() {
+    // Env
+    dotenv().ok();
+    let pg_host = env::var("PG_HOST").unwrap_or("localhost".to_owned());
+    let pg_port = env::var("PG_PORT").unwrap_or("5432".to_owned()).parse::<u32>().expect("Invalid PG_PORT");
+    let pg_user = env::var("PG_USER").unwrap_or(env::var("USER").unwrap());
+    let pg_passwd = env::var("PG_PASSWORD").unwrap_or("".to_owned());
+    let pg_dbname = env::var("PG_DBNAME").unwrap_or(pg_user);
+
+    let pg_dsn = format!("host={} port={} user={} password={} dbname={}", pg_host, pg_port, pg_user, pg_passwd, pg_dbname);
+
     // Arguments and options
     let matches = App::new("Teleinfo Reader")
         .version("0.1.0")
@@ -196,21 +208,11 @@ fn main() {
                 .short("v")
                 .takes_value(false),
         )
-        .arg(
-            Arg::with_name("postgres_dsn")
-                .help("PostgreSQL Data Source Name")
-                .short("d")
-                .long("--dsn")
-                .required(true),
-        )
         .get_matches();
 
     let device = matches
         .value_of("device")
         .expect("Cannot read 'device' parameter from arguments");
-    let pg_dsn = matches.
-        value_of("postgres_dsn")
-        .expect("Cannot read 'postgres_dsn' parameter from arguments");
     let verbose = matches.is_present("verbose");
     let baud_rate = 1200;
 
@@ -229,7 +231,7 @@ fn main() {
             let mut serial_data: Vec<u8> = Vec::new();
             let mut started: bool = false;
 
-            let mut pg = Client::connect(pg_dsn, NoTls).expect("Cannot connect to PostgreSQL database");
+            let mut pg = Client::connect(&pg_dsn, NoTls).expect("Cannot connect to PostgreSQL database");
 
             println!("Listening data on {} at baud {}", &device, &baud_rate);
             loop {
