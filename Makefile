@@ -1,6 +1,9 @@
 clean:
-	rm -rf target
+	ssh pi@monitelec.home "cd teleinfo-reader && rm -rfv target"
 
-build-rpi:
-	cross build --target armv7-unknown-linux-musleabihf --release
+build-rpi-release:
+	ssh pi@monitelec.home "cd teleinfo-reader && /home/pi/.cargo/bin/cargo build --release"
+
+build-rpi-debug:
+	ssh pi@monitelec.home "cd teleinfo-reader && /home/pi/.cargo/bin/cargo build"
 
