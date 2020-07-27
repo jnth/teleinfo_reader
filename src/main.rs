@@ -187,7 +187,7 @@ fn main() {
     let pg_port = env::var("PG_PORT").unwrap_or("5432".to_owned()).parse::<u32>().expect("Invalid PG_PORT");
     let pg_user = env::var("PG_USER").unwrap_or(env::var("USER").unwrap());
     let pg_passwd = env::var("PG_PASSWORD").unwrap_or("".to_owned());
-    let pg_dbname = env::var("PG_DBNAME").unwrap_or(pg_user);
+    let pg_dbname = env::var("PG_DBNAME").unwrap_or(pg_user.clone());
 
     let pg_dsn = format!("host={} port={} user={} password={} dbname={}", pg_host, pg_port, pg_user, pg_passwd, pg_dbname);
 
