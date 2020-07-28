@@ -1,8 +1,7 @@
 # Teleinfo Reader
 
-Rust CLI program that read serial data from teleinformation flux.
+Rust program that read serial data from teleinformation flux.
 Only work for the TEMPO subscription.
-
 Send data into PostgreSQL database.
 
 
@@ -15,4 +14,9 @@ Create a `.env` file to configure the PostgreSQL connection:
  - `PG_USER` (local user by default),
  - `PG_PASSWORD` (empty string by default),
  - `PG_DBNAME` (same as user name by default).
+ 
+ 
+## CLI script
+
+ - `read-teleinfo`: read the serial data and send them into a PostgreSQL database.
  
