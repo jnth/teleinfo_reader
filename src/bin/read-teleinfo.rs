@@ -68,20 +68,20 @@ fn main() {
                     Ok(_t) => {
                         let c = &serial_buf[0];
                         if c == &2 {
-                            debug!("get start character of a record");
+                            debug!("Get start character of a record");
                             serial_data.clear();
                             started = true;
                         } else if c == &3 && started {
-                            debug!("get end of record character");
+                            debug!("Get end of record character");
                             match Record::from_string(String::from_utf8_lossy(&serial_data).into_owned()) {
                                 Some(record) => {
                                     if verbose {
-                                        println!("get record: {:?}", record);
+                                        println!("Get record: {:?}", record);
                                     }
                                 }
                                 None => {
                                     if verbose {
-                                        println!("skipping invalid reading...");
+                                        println!("Skipping invalid reading...");
                                     }
                                 }
                             }
@@ -93,6 +93,10 @@ fn main() {
                         // println!("{:?}", &serial_buf[..t]);
                     }
                     Err(ref e) if e.kind() == io::ErrorKind::TimedOut => (),
+                    Err(ref e) if e.kind() == io::ErrorKind::BrokenPipe => {
+                        eprintln!("Broken pipe");
+                        ::std::process::exit(1);
+                    },
                     Err(e) => eprintln!("{:?}", e),
                 }
             }
