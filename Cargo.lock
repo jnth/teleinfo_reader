@@ -874,6 +874,7 @@ dependencies = [
  "dotenv",
  "log",
  "postgres",
+ "rand",
  "regex",
  "serde",
  "serde_derive",
