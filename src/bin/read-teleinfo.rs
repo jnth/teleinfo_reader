@@ -3,8 +3,8 @@ use log::debug;
 use serialport::prelude::*;
 use std::io;
 use std::time::Duration;
-use teleinfo_reader::{establish_connection, save_record_into_db};
 use teleinfo_reader::models::NewRecord;
+use teleinfo_reader::{establish_connection, save_record_into_db};
 
 fn main() {
     // Arguments and options
@@ -60,7 +60,9 @@ fn main() {
                             started = true;
                         } else if c == &3 && started {
                             debug!("Get end of record character");
-                            match NewRecord::from_string(String::from_utf8_lossy(&serial_data).into_owned()) {
+                            match NewRecord::from_string(
+                                String::from_utf8_lossy(&serial_data).into_owned(),
+                            ) {
                                 Some(new_record) => {
                                     let record = save_record_into_db(&conn, new_record);
                                     if verbose {
@@ -84,7 +86,7 @@ fn main() {
                     Err(ref e) if e.kind() == io::ErrorKind::BrokenPipe => {
                         eprintln!("Broken pipe");
                         ::std::process::exit(1);
-                    },
+                    }
                     Err(e) => eprintln!("{:?}", e),
                 }
             }

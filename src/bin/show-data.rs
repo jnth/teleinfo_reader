@@ -20,8 +20,7 @@ fn main() {
         for record in results {
             println!("{}", record);
         }
-    }
-    else {
+    } else {
         println!("There's no data in database.")
     }
 }

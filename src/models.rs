@@ -1,9 +1,8 @@
-use log::warn;
-use std::time::SystemTime;
-use regex::Regex;
 use super::schema::teleinfo;
+use log::warn;
+use regex::Regex;
 use std::fmt;
-
+use std::time::SystemTime;
 
 #[derive(Debug, Queryable)]
 pub struct Record {
@@ -27,7 +26,6 @@ pub struct Record {
     motdetat: String,
 }
 
-
 impl fmt::Display for Record {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "id: {}, dt_utc: {:?}, adco: {}, optarif: {}, isousc: {}, iinst: {}, imax: {}, papp: {}, hcjb: {}, hpjb: {}, hcjw: {}, hpjw: {}, hcjr: {}, hpjr: {}, ptec: {}, demain: {}, hhphc: {}, motdetat: {}",
@@ -36,7 +34,7 @@ impl fmt::Display for Record {
 }
 
 #[derive(Debug, Insertable)]
-#[table_name="teleinfo"]
+#[table_name = "teleinfo"]
 pub struct NewRecord {
     adco: String,
     optarif: String,
@@ -59,24 +57,24 @@ pub struct NewRecord {
 impl NewRecord {
     pub fn from_string(string: String) -> Option<NewRecord> {
         let re = Regex::new(concat!(
-        r"\x0aADCO (?P<adco>\d+) .\x0d",
-        r"\x0aOPTARIF (?P<optarif>.+) .\x0d",
-        r"\x0aISOUSC (?P<isousc>\d+) .\x0d",
-        r"\x0aBBRHCJB (?P<hcjb>\d+) .\x0d",
-        r"\x0aBBRHPJB (?P<hpjb>\d+) .\x0d",
-        r"\x0aBBRHCJW (?P<hcjw>\d+) .\x0d",
-        r"\x0aBBRHPJW (?P<hpjw>\d+) .\x0d",
-        r"\x0aBBRHCJR (?P<hcjr>\d+) .\x0d",
-        r"\x0aBBRHPJR (?P<hpjr>\d+) .\x0d",
-        r"\x0aPTEC (?P<ptec>.+) .\x0d",
-        r"\x0aDEMAIN (?P<demain>.+) .\x0d",
-        r"\x0aIINST (?P<iinst>\d+) .\x0d",
-        r"\x0aIMAX (?P<imax>\d+) .\x0d",
-        r"\x0aPAPP (?P<papp>\d+) .\x0d",
-        r"\x0aHHPHC (?P<hhphc>.+) .\x0d",
-        r"\x0aMOTDETAT (?P<motdetat>.+) .\x0d",
+            r"\x0aADCO (?P<adco>\d+) .\x0d",
+            r"\x0aOPTARIF (?P<optarif>.+) .\x0d",
+            r"\x0aISOUSC (?P<isousc>\d+) .\x0d",
+            r"\x0aBBRHCJB (?P<hcjb>\d+) .\x0d",
+            r"\x0aBBRHPJB (?P<hpjb>\d+) .\x0d",
+            r"\x0aBBRHCJW (?P<hcjw>\d+) .\x0d",
+            r"\x0aBBRHPJW (?P<hpjw>\d+) .\x0d",
+            r"\x0aBBRHCJR (?P<hcjr>\d+) .\x0d",
+            r"\x0aBBRHPJR (?P<hpjr>\d+) .\x0d",
+            r"\x0aPTEC (?P<ptec>.+) .\x0d",
+            r"\x0aDEMAIN (?P<demain>.+) .\x0d",
+            r"\x0aIINST (?P<iinst>\d+) .\x0d",
+            r"\x0aIMAX (?P<imax>\d+) .\x0d",
+            r"\x0aPAPP (?P<papp>\d+) .\x0d",
+            r"\x0aHHPHC (?P<hhphc>.+) .\x0d",
+            r"\x0aMOTDETAT (?P<motdetat>.+) .\x0d",
         ))
-            .expect("Invalid regex");
+        .expect("Invalid regex");
         match re.captures(string.as_str()) {
             Some(captures) => {
                 let adco = captures
@@ -188,7 +186,6 @@ impl NewRecord {
                     hhphc,
                     motdetat,
                 })
-
             }
             None => {
                 warn!("Cannot captures data with the regex");
@@ -201,5 +198,3 @@ impl NewRecord {
     //     serde_json::to_string(&self).expect("Cannot serialize into JSON string")
     // }
 }
-
-
