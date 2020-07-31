@@ -1,7 +1,7 @@
 table! {
     teleinfo (id) {
         id -> Int4,
-        dt -> Timestamp,
+        dt_utc -> Timestamp,
         adco -> Varchar,
         optarif -> Varchar,
         isousc -> Int2,

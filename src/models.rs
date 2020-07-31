@@ -5,7 +5,7 @@ use regex::Regex;
 #[derive(Debug, Queryable)]
 pub struct Record {
     id: i32,
-    dt: SystemTime,
+    dt_utc: SystemTime,
     adco: String,
     optarif: String,
     isousc: i16,
