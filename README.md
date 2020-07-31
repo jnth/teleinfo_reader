@@ -7,19 +7,15 @@ Send data into PostgreSQL database.
 
 ## Configuration
 
-Create a `.env` file to configure the PostgreSQL connection:
+Create a `.env` file to configure the PostgreSQL connection with the variable `DATABASE_URL` (like 
+`postgres://user:password@database-host:port/dbname`, see `diesel` documentation for more information).
 
- - `PG_HOST` (`localhost` by default),
- - `PG_PORT` (`5432` by default),
- - `PG_USER` (local user by default),
- - `PG_PASSWORD` (empty string by default),
- - `PG_DBNAME` (same as user name by default).
- 
  
 ## CLI scripts
 
  - `read-teleinfo`: read the serial data and send them into a PostgreSQL database.
  - `data-generator`: open file socket and send fake serial data.
+ - `show-data`: read and show the last values from the PostgreSQL database.
  
 ## Test with the data generator
 
