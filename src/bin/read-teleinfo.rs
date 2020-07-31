@@ -76,7 +76,6 @@ fn main() {
                                 }
                             }
 
-                        // println!("{}", record.to_json());
                         } else {
                             serial_data.push(*c);
                         }
