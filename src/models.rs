@@ -2,29 +2,53 @@ use log::warn;
 use std::time::SystemTime;
 use regex::Regex;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Queryable)]
 pub struct Record {
+    id: i32,
     dt: SystemTime,
     adco: String,
     optarif: String,
-    isousc: u8,
-    hcjb: u64,
-    hpjb: u64,
-    hcjw: u64,
-    hpjw: u64,
-    hcjr: u64,
-    hpjr: u64,
+    isousc: i16,
+    hcjb: i64,
+    hpjb: i64,
+    hcjw: i64,
+    hpjw: i64,
+    hcjr: i64,
+    hpjr: i64,
     ptec: String,
     demain: String,
-    iinst: u8,
-    imax: u8,
-    papp: u16,
+    iinst: i16,
+    imax: i16,
+    papp: i32,
     hhphc: String,
     motdetat: String,
 }
 
-impl Record {
-    pub fn from_string(string: String) -> Option<Record> {
+use super::schema::teleinfo;
+
+#[derive(Debug, Insertable)]
+#[table_name="teleinfo"]
+pub struct NewRecord {
+    adco: String,
+    optarif: String,
+    isousc: i16,
+    hcjb: i64,
+    hpjb: i64,
+    hcjw: i64,
+    hpjw: i64,
+    hcjr: i64,
+    hpjr: i64,
+    ptec: String,
+    demain: String,
+    iinst: i16,
+    imax: i16,
+    papp: i32,
+    hhphc: String,
+    motdetat: String,
+}
+
+impl NewRecord {
+    pub fn from_string(string: String) -> Option<NewRecord> {
         let re = Regex::new(concat!(
         r"\x0aADCO (?P<adco>\d+) .\x0d",
         r"\x0aOPTARIF (?P<optarif>.+) .\x0d",
@@ -56,47 +80,47 @@ impl Record {
                     .expect("Cannot get 'optarif' value with the regex")
                     .as_str()
                     .to_owned();
-                let isousc: u8 = captures
+                let isousc: i16 = captures
                     .name("isousc")
                     .expect("Cannot get 'isousc' value with the regex")
                     .as_str()
-                    .parse::<u8>()
+                    .parse::<i16>()
                     .expect("Invalid value of 'isousc'");
-                let hcjb: u64 = captures
+                let hcjb: i64 = captures
                     .name("hcjb")
                     .expect("Cannot get 'hcjb' value with the regex")
                     .as_str()
-                    .parse::<u64>()
+                    .parse::<i64>()
                     .expect("Invalid value of 'hcjb'");
-                let hpjb: u64 = captures
+                let hpjb: i64 = captures
                     .name("hpjb")
                     .expect("Cannot get 'hpjb' value with the regex")
                     .as_str()
-                    .parse::<u64>()
+                    .parse::<i64>()
                     .expect("Invalid value of 'hpjb'");
-                let hcjw: u64 = captures
+                let hcjw: i64 = captures
                     .name("hcjw")
                     .expect("Cannot get 'hcjw' value with the regex")
                     .as_str()
-                    .parse::<u64>()
+                    .parse::<i64>()
                     .expect("Invalid value of 'hcjw'");
-                let hpjw: u64 = captures
+                let hpjw: i64 = captures
                     .name("hpjw")
                     .expect("Cannot get 'hpjw' value with the regex")
                     .as_str()
-                    .parse::<u64>()
+                    .parse::<i64>()
                     .expect("Invalid value of 'hpjw'");
-                let hcjr: u64 = captures
+                let hcjr: i64 = captures
                     .name("hcjr")
                     .expect("Cannot get 'hcjr' value with the regex")
                     .as_str()
-                    .parse::<u64>()
+                    .parse::<i64>()
                     .expect("Invalid value of 'hcjr'");
-                let hpjr: u64 = captures
+                let hpjr: i64 = captures
                     .name("hpjr")
                     .expect("Cannot get 'hpjr' value with the regex")
                     .as_str()
-                    .parse::<u64>()
+                    .parse::<i64>()
                     .expect("Invalid value of 'hpjr'");
                 let ptec = captures
                     .name("ptec")
@@ -108,23 +132,23 @@ impl Record {
                     .expect("Cannot get 'demain' value with the regex")
                     .as_str()
                     .to_owned();
-                let iinst: u8 = captures
+                let iinst: i16 = captures
                     .name("iinst")
                     .expect("Cannot get 'iinst' value with the regex")
                     .as_str()
-                    .parse::<u8>()
+                    .parse::<i16>()
                     .expect("Invalid value of 'iinst'");
-                let imax: u8 = captures
+                let imax: i16 = captures
                     .name("imax")
                     .expect("Cannot get 'imax' value with the regex")
                     .as_str()
-                    .parse::<u8>()
+                    .parse::<i16>()
                     .expect("Invalid value of 'imax'");
-                let papp: u16 = captures
+                let papp: i32 = captures
                     .name("papp")
                     .expect("Cannot get 'papp' value with the regex")
                     .as_str()
-                    .parse::<u16>()
+                    .parse::<i32>()
                     .expect("Invalid value of 'papp'");
                 let hhphc = captures
                     .name("hhphc")
@@ -137,8 +161,7 @@ impl Record {
                     .as_str()
                     .to_owned();
 
-                Some(Record {
-                    dt: SystemTime::now(),
+                Some(NewRecord {
                     adco,
                     optarif,
                     isousc,
@@ -165,7 +188,9 @@ impl Record {
         }
     }
 
-    pub fn to_json(&self) -> String {
-        serde_json::to_string(&self).expect("Cannot serialize into JSON string")
-    }
+    // pub fn to_json(&self) -> String {
+    //     serde_json::to_string(&self).expect("Cannot serialize into JSON string")
+    // }
 }
+
+

@@ -1,24 +1,12 @@
 use clap::{App, Arg};
 use log::debug;
-use dotenv::dotenv;
 use serialport::prelude::*;
-use std::env;
 use std::io;
 use std::time::Duration;
-use postgres::{Client, NoTls};
-use teleinfo_reader::models::Record;
+use teleinfo_reader::{establish_connection, save_record_into_db};
+use teleinfo_reader::models::NewRecord;
 
 fn main() {
-    // Env
-    dotenv().ok();
-    let pg_host = env::var("PG_HOST").unwrap_or("localhost".to_owned());
-    let pg_port = env::var("PG_PORT").unwrap_or("5432".to_owned()).parse::<u32>().expect("Invalid PG_PORT");
-    let pg_user = env::var("PG_USER").unwrap_or(env::var("USER").unwrap());
-    let pg_passwd = env::var("PG_PASSWORD").unwrap_or("".to_owned());
-    let pg_dbname = env::var("PG_DBNAME").unwrap_or(pg_user.clone());
-
-    let pg_dsn = format!("host={} port={} user={} password={} dbname={}", pg_host, pg_port, pg_user, pg_passwd, pg_dbname);
-
     // Arguments and options
     let matches = App::new("Teleinfo Reader")
         .version("0.1.0")
@@ -44,6 +32,8 @@ fn main() {
     let verbose = matches.is_present("verbose");
     let baud_rate = 1200;
 
+    let conn = establish_connection();
+
     let settings = SerialPortSettings {
         baud_rate,
         data_bits: DataBits::Seven,
@@ -59,9 +49,6 @@ fn main() {
             let mut serial_data: Vec<u8> = Vec::new();
             let mut started: bool = false;
 
-            let _pg = Client::connect(&pg_dsn, NoTls)
-                .expect(&format!("Cannot connect to PostgreSQL database {}@{}:{}/{}", pg_user, pg_host, pg_port, pg_dbname));
-
             println!("Listening data on {} at baud {}", &device, &baud_rate);
             loop {
                 match port.read(serial_buf.as_mut_slice()) {
@@ -73,11 +60,12 @@ fn main() {
                             started = true;
                         } else if c == &3 && started {
                             debug!("Get end of record character");
-                            match Record::from_string(String::from_utf8_lossy(&serial_data).into_owned()) {
+                            match NewRecord::from_string(String::from_utf8_lossy(&serial_data).into_owned()) {
                                 Some(record) => {
                                     if verbose {
                                         println!("Get record: {:?}", record);
                                     }
+                                    save_record_into_db(&conn, record);
                                 }
                                 None => {
                                     if verbose {
