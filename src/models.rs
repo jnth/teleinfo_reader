@@ -1,6 +1,9 @@
 use log::warn;
 use std::time::SystemTime;
 use regex::Regex;
+use super::schema::teleinfo;
+use std::fmt;
+
 
 #[derive(Debug, Queryable)]
 pub struct Record {
@@ -24,7 +27,13 @@ pub struct Record {
     motdetat: String,
 }
 
-use super::schema::teleinfo;
+
+impl fmt::Display for Record {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "id: {}, dt_utc: {:?}, adco: {}, optarif: {}, isousc: {}, iinst: {}, imax: {}, papp: {}, hcjb: {}, hpjb: {}, hcjw: {}, hpjw: {}, hcjr: {}, hpjr: {}, ptec: {}, demain: {}, hhphc: {}, motdetat: {}",
+               self.id, self.dt_utc, self.adco, self.optarif, self.isousc, self.iinst, self.imax, self.papp, self.hcjb, self.hpjb, self.hcjw, self.hpjw, self.hcjr, self.hpjr, self.ptec, self.demain, self.hhphc, self.motdetat)
+    }
+}
 
 #[derive(Debug, Insertable)]
 #[table_name="teleinfo"]
