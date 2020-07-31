@@ -2,12 +2,12 @@ use super::schema::teleinfo;
 use log::warn;
 use regex::Regex;
 use std::fmt;
-use std::time::SystemTime;
+use chrono::prelude::*;
 
 #[derive(Debug, Queryable)]
 pub struct Record {
     id: i32,
-    dt_utc: SystemTime,
+    dt_utc: NaiveDateTime,
     adco: String,
     optarif: String,
     isousc: i16,
@@ -28,8 +28,8 @@ pub struct Record {
 
 impl fmt::Display for Record {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "id: {}, dt_utc: {:?}, adco: {}, optarif: {}, isousc: {}, iinst: {}, imax: {}, papp: {}, hcjb: {}, hpjb: {}, hcjw: {}, hpjw: {}, hcjr: {}, hpjr: {}, ptec: {}, demain: {}, hhphc: {}, motdetat: {}",
-               self.id, self.dt_utc, self.adco, self.optarif, self.isousc, self.iinst, self.imax, self.papp, self.hcjb, self.hpjb, self.hcjw, self.hpjw, self.hcjr, self.hpjr, self.ptec, self.demain, self.hhphc, self.motdetat)
+        write!(f, "id: {}, dt_utc: {}, adco: {}, optarif: {}, isousc: {}, iinst: {}, imax: {}, papp: {}, hcjb: {}, hpjb: {}, hcjw: {}, hpjw: {}, hcjr: {}, hpjr: {}, ptec: {}, demain: {}, hhphc: {}, motdetat: {}",
+               self.id, self.dt_utc.format("%Y-%m-%d %H:%M:%S"), self.adco, self.optarif, self.isousc, self.iinst, self.imax, self.papp, self.hcjb, self.hpjb, self.hcjw, self.hpjw, self.hcjr, self.hpjr, self.ptec, self.demain, self.hhphc, self.motdetat)
     }
 }
 

@@ -66,7 +66,7 @@ fn main() {
                                 Some(new_record) => {
                                     let record = save_record_into_db(&conn, new_record);
                                     if verbose {
-                                        println!("Get record: {:?}", record);
+                                        println!("Get record: {}", record);
                                     }
                                 }
                                 None => {
