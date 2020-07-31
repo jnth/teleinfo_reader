@@ -193,8 +193,4 @@ impl NewRecord {
             }
         }
     }
-
-    // pub fn to_json(&self) -> String {
-    //     serde_json::to_string(&self).expect("Cannot serialize into JSON string")
-    // }
 }

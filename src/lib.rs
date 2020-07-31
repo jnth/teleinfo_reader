@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
-extern crate serde_derive;
 
 use self::models::{NewRecord, Record};
 use diesel::pg::PgConnection;
