@@ -61,11 +61,11 @@ fn main() {
                         } else if c == &3 && started {
                             debug!("Get end of record character");
                             match NewRecord::from_string(String::from_utf8_lossy(&serial_data).into_owned()) {
-                                Some(record) => {
+                                Some(new_record) => {
+                                    let record = save_record_into_db(&conn, new_record);
                                     if verbose {
                                         println!("Get record: {:?}", record);
                                     }
-                                    save_record_into_db(&conn, record);
                                 }
                                 None => {
                                     if verbose {
