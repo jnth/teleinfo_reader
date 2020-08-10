@@ -9,27 +9,18 @@ pub struct Record {
     id: i32,
     dt_utc: NaiveDateTime,
     adco: String,
-    optarif: String,
-    isousc: i16,
     hcjb: i64,
     hpjb: i64,
     hcjw: i64,
     hpjw: i64,
     hcjr: i64,
     hpjr: i64,
-    ptec: String,
-    demain: String,
-    iinst: i16,
-    imax: i16,
-    papp: i32,
-    hhphc: String,
-    motdetat: String,
 }
 
 impl fmt::Display for Record {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "id: {}, dt_utc: {}, adco: {}, optarif: {}, isousc: {}, iinst: {}, imax: {}, papp: {}, hcjb: {}, hpjb: {}, hcjw: {}, hpjw: {}, hcjr: {}, hpjr: {}, ptec: {}, demain: {}, hhphc: {}, motdetat: {}",
-               self.id, self.dt_utc.format("%Y-%m-%d %H:%M:%S"), self.adco, self.optarif, self.isousc, self.iinst, self.imax, self.papp, self.hcjb, self.hpjb, self.hcjw, self.hpjw, self.hcjr, self.hpjr, self.ptec, self.demain, self.hhphc, self.motdetat)
+        write!(f, "id: {}, dt_utc: {}, adco: {}, hcjb: {}, hpjb: {}, hcjw: {}, hpjw: {}, hcjr: {}, hpjr: {}",
+               self.id, self.dt_utc.format("%Y-%m-%d %H:%M:%S"), self.adco, self.hcjb, self.hpjb, self.hcjw, self.hpjw, self.hcjr, self.hpjr)
     }
 }
 
@@ -37,21 +28,12 @@ impl fmt::Display for Record {
 #[table_name = "teleinfo"]
 pub struct NewRecord {
     adco: String,
-    optarif: String,
-    isousc: i16,
     hcjb: i64,
     hpjb: i64,
     hcjw: i64,
     hpjw: i64,
     hcjr: i64,
     hpjr: i64,
-    ptec: String,
-    demain: String,
-    iinst: i16,
-    imax: i16,
-    papp: i32,
-    hhphc: String,
-    motdetat: String,
 }
 
 impl NewRecord {
@@ -82,17 +64,6 @@ impl NewRecord {
                     .expect("Cannot get 'adco' value with the regex")
                     .as_str()
                     .to_owned();
-                let optarif = captures
-                    .name("optarif")
-                    .expect("Cannot get 'optarif' value with the regex")
-                    .as_str()
-                    .to_owned();
-                let isousc: i16 = captures
-                    .name("isousc")
-                    .expect("Cannot get 'isousc' value with the regex")
-                    .as_str()
-                    .parse::<i16>()
-                    .expect("Invalid value of 'isousc'");
                 let hcjb: i64 = captures
                     .name("hcjb")
                     .expect("Cannot get 'hcjb' value with the regex")
@@ -129,62 +100,15 @@ impl NewRecord {
                     .as_str()
                     .parse::<i64>()
                     .expect("Invalid value of 'hpjr'");
-                let ptec = captures
-                    .name("ptec")
-                    .expect("Cannot get 'ptec' value with the regex")
-                    .as_str()
-                    .to_owned();
-                let demain = captures
-                    .name("demain")
-                    .expect("Cannot get 'demain' value with the regex")
-                    .as_str()
-                    .to_owned();
-                let iinst: i16 = captures
-                    .name("iinst")
-                    .expect("Cannot get 'iinst' value with the regex")
-                    .as_str()
-                    .parse::<i16>()
-                    .expect("Invalid value of 'iinst'");
-                let imax: i16 = captures
-                    .name("imax")
-                    .expect("Cannot get 'imax' value with the regex")
-                    .as_str()
-                    .parse::<i16>()
-                    .expect("Invalid value of 'imax'");
-                let papp: i32 = captures
-                    .name("papp")
-                    .expect("Cannot get 'papp' value with the regex")
-                    .as_str()
-                    .parse::<i32>()
-                    .expect("Invalid value of 'papp'");
-                let hhphc = captures
-                    .name("hhphc")
-                    .expect("Cannot get 'hhphc' value with the regex")
-                    .as_str()
-                    .to_owned();
-                let motdetat = captures
-                    .name("motdetat")
-                    .expect("Cannot get 'motdetat' value with the regex")
-                    .as_str()
-                    .to_owned();
 
                 Some(NewRecord {
                     adco,
-                    optarif,
-                    isousc,
                     hcjb,
                     hpjb,
                     hcjw,
                     hpjw,
                     hcjr,
                     hpjr,
-                    ptec,
-                    demain,
-                    iinst,
-                    imax,
-                    papp,
-                    hhphc,
-                    motdetat,
                 })
             }
             None => {

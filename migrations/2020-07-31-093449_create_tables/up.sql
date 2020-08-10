@@ -1,25 +1,14 @@
-CREATE DOMAIN u8 AS int2 CHECK ( VALUE >= 0 AND VALUE < 256);
-CREATE DOMAIN u16 AS int4 CHECK ( VALUE >= 0 AND VALUE < 65536);
 CREATE DOMAIN u64 AS int8 CHECK ( VALUE >= 0 AND VALUE < 18446744073709551616);
 
 CREATE TABLE teleinfo (
     id SERIAL PRIMARY KEY NOT NULL,
     dt_utc TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     adco VARCHAR(12) NOT NULL,
-    optarif VARCHAR(4) NOT NULL,
-    isousc u8 NOT NULL,
     hcjb u64 NOT NULL,
     hpjb u64 NOT NULL,
     hcjw u64 NOT NULL,
     hpjw u64 NOT NULL,
     hcjr u64 NOT NULL,
-    hpjr u64 NOT NULL,
-    ptec VARCHAR(4) NOT NULL,
-    demain VARCHAR(4) NOT NULL,
-    iinst u8 NOT NULL,
-    imax u8 NOT NULL,
-    papp u16 NOT NULL,
-    hhphc VARCHAR(1) NOT NULL,
-    motdetat VARCHAR(6) NOT NULL
+    hpjr u64 NOT NULL
 );
 
