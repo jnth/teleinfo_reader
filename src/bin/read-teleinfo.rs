@@ -3,8 +3,40 @@ use log::debug;
 use serialport::prelude::*;
 use std::io;
 use std::time::Duration;
+use std::str::FromStr;
 use teleinfo_reader::models::NewRecord;
 use teleinfo_reader::{establish_connection, save_record_into_db};
+use chrono::{DateTime, Utc};
+use cron::Schedule;
+
+
+struct Events {
+    schedule: Schedule,
+    dt_utc: DateTime<Utc>,
+}
+
+impl Events {
+
+    /// Create events
+    fn new(cron_expression: &str) -> Events {
+        let schedule = Schedule::from_str(cron_expression).unwrap();
+        let dt_utc= schedule.upcoming(Utc).next().unwrap();
+        Events { schedule, dt_utc }
+    }
+
+    /// Update to the next scheduled event
+    fn next(&mut self) {
+        let dt_utc = self.schedule.upcoming(Utc).next().unwrap();
+        self.dt_utc = dt_utc;
+    }
+
+    /// Check if the event is passed
+    fn passed(&self) -> bool {
+        self.dt_utc <= Utc::now()
+    }
+
+
+}
 
 fn main() {
     // Arguments and options
@@ -31,6 +63,8 @@ fn main() {
         .expect("Cannot read 'device' parameter from arguments");
     let verbose = matches.is_present("verbose");
     let baud_rate = 1200;
+    let cron_expression = "0 * * * * * *";  // every minutes
+    let mut events = Events::new(cron_expression);
 
     let conn = establish_connection();
 
@@ -48,6 +82,7 @@ fn main() {
             let mut serial_buf: Vec<u8> = vec![0; 1];
             let mut serial_data: Vec<u8> = Vec::new();
             let mut started: bool = false;
+            events.next();
 
             println!("Listening data on {} at baud {}", &device, &baud_rate);
             loop {
@@ -64,9 +99,18 @@ fn main() {
                                 String::from_utf8_lossy(&serial_data).into_owned(),
                             ) {
                                 Some(new_record) => {
-                                    let record = save_record_into_db(&conn, new_record);
-                                    if verbose {
-                                        println!("Get record: {}", record);
+                                    let now = Utc::now().format("%Y-%m-%d %H:%M:%S");
+                                    if events.passed() {
+                                        let record = save_record_into_db(&conn, new_record);
+                                        if verbose {
+                                            println!("Get new record at {} => saved into database: {}", now, record);
+                                        }
+                                        events.next();
+                                    }
+                                    else {
+                                        if verbose {
+                                            println!("Get new record at {} => skipped", now);
+                                        }
                                     }
                                 }
                                 None => {
