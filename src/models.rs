@@ -1,8 +1,8 @@
 use super::schema::teleinfo;
+use chrono::prelude::*;
 use log::warn;
 use regex::Regex;
 use std::fmt;
-use chrono::prelude::*;
 
 #[derive(Debug, Queryable)]
 pub struct Record {

@@ -1,14 +1,13 @@
+use chrono::{DateTime, Utc};
 use clap::{App, Arg};
+use cron::Schedule;
 use log::debug;
 use serialport::prelude::*;
 use std::io;
-use std::time::Duration;
 use std::str::FromStr;
+use std::time::Duration;
 use teleinfo_reader::models::NewRecord;
 use teleinfo_reader::{establish_connection, save_record_into_db};
-use chrono::{DateTime, Utc};
-use cron::Schedule;
-
 
 struct Events {
     schedule: Schedule,
@@ -16,11 +15,10 @@ struct Events {
 }
 
 impl Events {
-
     /// Create events
     fn new(cron_expression: &str) -> Events {
         let schedule = Schedule::from_str(cron_expression).unwrap();
-        let dt_utc= schedule.upcoming(Utc).next().unwrap();
+        let dt_utc = schedule.upcoming(Utc).next().unwrap();
         Events { schedule, dt_utc }
     }
 
@@ -34,14 +32,12 @@ impl Events {
     fn passed(&self) -> bool {
         self.dt_utc <= Utc::now()
     }
-
-
 }
 
 fn main() {
     // Arguments and options
     let matches = App::new("Teleinfo Reader")
-        .version("0.2.0")
+        .version("0.2.1")
         .author("Jonathan Virga <jonathan.virga@gmail.com>")
         .about("Read teleinfomation data from serial device")
         .arg(
@@ -63,7 +59,7 @@ fn main() {
         .expect("Cannot read 'device' parameter from arguments");
     let verbose = matches.is_present("verbose");
     let baud_rate = 1200;
-    let cron_expression = "0 * * * * * *";  // every minutes
+    let cron_expression = "0 * * * * * *"; // every minutes
     let mut events = Events::new(cron_expression);
 
     let conn = establish_connection();
@@ -103,11 +99,13 @@ fn main() {
                                     if events.passed() {
                                         let record = save_record_into_db(&conn, new_record);
                                         if verbose {
-                                            println!("Get new record at {} => saved into database: {}", now, record);
+                                            println!(
+                                                "Get new record at {} => saved into database: {}",
+                                                now, record
+                                            );
                                         }
                                         events.next();
-                                    }
-                                    else {
+                                    } else {
                                         if verbose {
                                             println!("Get new record at {} => skipped", now);
                                         }
@@ -119,7 +117,6 @@ fn main() {
                                     }
                                 }
                             }
-
                         } else {
                             serial_data.push(*c);
                         }
