@@ -1,7 +1,7 @@
 extern crate diesel;
 extern crate teleinfo_reader;
 
-use clap::{App, Arg};
+use clap::{App, Arg, crate_version};
 use self::diesel::prelude::*;
 use self::teleinfo_reader::*;
 use teleinfo_reader::settings::Settings;
@@ -11,8 +11,8 @@ fn main() {
     use teleinfo_reader::schema::teleinfo::dsl::*;
 
     // Arguments and options
-    let matches = App::new("Teleinfo Reader -- show last record")
-        .version("0.3.0")
+    let matches = App::new("Teleinfo Reader (show last record)")
+        .version(crate_version!())
         .author("Jonathan Virga <jonathan.virga@gmail.com>")
         .about("Show the last values from the database")
         .arg(

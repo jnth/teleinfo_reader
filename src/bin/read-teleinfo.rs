@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use clap::{App, Arg};
+use clap::{App, Arg, crate_version};
 use cron::Schedule;
 use log::debug;
 use serialport::prelude::*;
@@ -37,8 +37,8 @@ impl Events {
 
 fn main() {
     // Arguments and options
-    let matches = App::new("Teleinfo Reader -- read serial data")
-        .version("0.3.0")
+    let matches = App::new("Teleinfo Reader (read serial data)")
+        .version(crate_version!())
         .author("Jonathan Virga <jonathan.virga@gmail.com>")
         .about("Read teleinfomation data from serial device")
         .arg(
