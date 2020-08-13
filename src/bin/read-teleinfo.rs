@@ -37,7 +37,7 @@ impl Events {
 
 fn main() {
     // Arguments and options
-    let matches = App::new("Teleinfo Reader")
+    let matches = App::new("Teleinfo Reader -- read serial data")
         .version("0.3.0")
         .author("Jonathan Virga <jonathan.virga@gmail.com>")
         .about("Read teleinfomation data from serial device")

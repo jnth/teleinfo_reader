@@ -1,6 +1,7 @@
 extern crate diesel;
 extern crate teleinfo_reader;
 
+use clap::{App, Arg};
 use self::diesel::prelude::*;
 use self::teleinfo_reader::*;
 use teleinfo_reader::settings::Settings;
@@ -9,7 +10,25 @@ use teleinfo_reader::models::Record;
 fn main() {
     use teleinfo_reader::schema::teleinfo::dsl::*;
 
-    let settings = Settings::read(None);
+    // Arguments and options
+    let matches = App::new("Teleinfo Reader -- show last record")
+        .version("0.3.0")
+        .author("Jonathan Virga <jonathan.virga@gmail.com>")
+        .about("Show the last values from the database")
+        .arg(
+            Arg::with_name("conf")
+                .help("Force use of specific configuration file")
+                .required(false)
+                .short("c")
+                .long("config")
+                .takes_value(true)
+                .value_name("file")
+        )
+        .get_matches();
+
+    let conf = matches.value_of("conf");
+    let settings = Settings::read(conf);
+
     let connection = establish_connection(&settings);
     let results = teleinfo
         .order_by(dt_utc.desc())

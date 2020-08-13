@@ -18,9 +18,11 @@ Create a `.env` file to configure the PostgreSQL connection with:
 
 The `read-teleinfo` executable read the serial data and send them into a PostgreSQL database.
 
-Usage: `read-teleinfo [-v] [device]`
+Usage: `read-teleinfo [-v] [-c file] [device]`
 
 The device path can be force. In this way, the device path set in the configuration file is ignored.
+The configuration file path can be force to read a specific configuration. By default, the script read
+`/etc/read-teleinfo.conf` and `.env` file.
 
 
 ### Data generator
@@ -32,7 +34,12 @@ The `data-generator` executable open a file socket and send fake serial data int
 
 The `show-data` executable read and show the last values from the PostgreSQL database.
  
- 
+Usage: `show-data [-c file]`
+
+The configuration file path can be force to read a specific configuration. By default, the script read
+`/etc/read-teleinfo.conf` and `.env` file.
+
+
 ## Test with the data generator
 
 Run the data generator script to create file socket and send data into it:
