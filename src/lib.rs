@@ -3,20 +3,16 @@ extern crate diesel;
 extern crate dotenv;
 
 use self::models::{NewRecord, Record};
+use self::settings::Settings;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-use dotenv::dotenv;
-use std::env;
 
 pub mod models;
 pub mod schema;
+pub mod settings;
 
-pub fn establish_connection() -> PgConnection {
-    dotenv().ok();
-
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-
-    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
+pub fn establish_connection(settings: &Settings) -> PgConnection {
+    PgConnection::establish(&settings.database_url).expect(&format!("Error connecting to {}", settings.database_url))
 }
 
 pub fn save_record_into_db(conn: &PgConnection, new_record: NewRecord) -> Record {

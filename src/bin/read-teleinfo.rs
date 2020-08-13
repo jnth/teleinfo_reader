@@ -3,11 +3,11 @@ use clap::{App, Arg};
 use cron::Schedule;
 use log::debug;
 use serialport::prelude::*;
-use std::{io, env};
+use std::io;
 use std::str::FromStr;
 use std::time::Duration;
-use dotenv;
 use teleinfo_reader::models::NewRecord;
+use teleinfo_reader::settings::Settings;
 use teleinfo_reader::{establish_connection, save_record_into_db};
 
 struct Events {
@@ -53,23 +53,32 @@ fn main() {
                 .short("v")
                 .takes_value(false),
         )
+        .arg(
+            Arg::with_name("conf")
+                .help("Force use of specific configuration file")
+                .required(false)
+                .short("c")
+                .long("config")
+                .takes_value(true)
+                .value_name("file")
+        )
         .get_matches();
 
+    // Configuration
+    let conf = matches.value_of("conf");
+    let settings = Settings::read(conf);
+
     let device = match matches.value_of("device") {
-        Some(path) => path.to_owned(),
-        None => {
-            dotenv::from_filename("/etc/read-teleinfo.conf").ok();
-            dotenv::from_filename(".env").ok();
-            dotenv::dotenv().ok();
-            env::var("TELEINFO_SERIAL").expect("Missing TELEINFO_SERIAL environment variable")
-        }
+        Some(path) => path,
+        None => &settings.serial_path,
     };
     let verbose = matches.is_present("verbose");
+
     let baud_rate = 1200;
     let cron_expression = "0 * * * * * *"; // every minutes
     let mut events = Events::new(cron_expression);
 
-    let conn = establish_connection();
+    let conn = establish_connection(&settings);
 
     let settings = SerialPortSettings {
         baud_rate,
