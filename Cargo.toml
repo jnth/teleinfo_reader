@@ -1,10 +1,22 @@
 [package]
 name = "teleinfo_reader"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Jonathan Virga <jonathan.virga@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package.metadata.deb]
+depends = "$auto, systemd"
+extended-description = "Read serial data from teleinformation flux"
+section = "admin"
+priority = "optional"
+assets = [
+    ["target/release/read-teleinfo", "usr/bin/read-teleinfo", "755"],
+    ["debian/read-teleinfo.service", "/lib/systemd/system/read-teleinfo.service", "644"],
+    ["debian/read-teleinfo.conf", "/etc/read-teleinfo.conf", "644"],
+]
+maintainer-scripts = "debian/scripts"
 
 [dependencies]
 serialport = "3.3.0"

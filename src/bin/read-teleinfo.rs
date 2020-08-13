@@ -3,9 +3,10 @@ use clap::{App, Arg};
 use cron::Schedule;
 use log::debug;
 use serialport::prelude::*;
-use std::io;
+use std::{io, env};
 use std::str::FromStr;
 use std::time::Duration;
+use dotenv;
 use teleinfo_reader::models::NewRecord;
 use teleinfo_reader::{establish_connection, save_record_into_db};
 
@@ -37,13 +38,13 @@ impl Events {
 fn main() {
     // Arguments and options
     let matches = App::new("Teleinfo Reader")
-        .version("0.2.1")
+        .version("0.3.0")
         .author("Jonathan Virga <jonathan.virga@gmail.com>")
         .about("Read teleinfomation data from serial device")
         .arg(
             Arg::with_name("device")
                 .help("Path of serial device")
-                .required(true)
+                .required(false)
                 .index(1),
         )
         .arg(
@@ -54,9 +55,15 @@ fn main() {
         )
         .get_matches();
 
-    let device = matches
-        .value_of("device")
-        .expect("Cannot read 'device' parameter from arguments");
+    let device = match matches.value_of("device") {
+        Some(path) => path.to_owned(),
+        None => {
+            dotenv::from_filename("/etc/read-teleinfo.conf").ok();
+            dotenv::from_filename(".env").ok();
+            dotenv::dotenv().ok();
+            env::var("TELEINFO_SERIAL").expect("Missing TELEINFO_SERIAL environment variable")
+        }
+    };
     let verbose = matches.is_present("verbose");
     let baud_rate = 1200;
     let cron_expression = "0 * * * * * *"; // every minutes
@@ -72,7 +79,7 @@ fn main() {
         stop_bits: StopBits::One,
         timeout: Duration::from_millis(1),
     };
-    let port = serialport::open_with_settings(device, &settings);
+    let port = serialport::open_with_settings(&device, &settings);
     match port {
         Ok(mut port) => {
             let mut serial_buf: Vec<u8> = vec![0; 1];
