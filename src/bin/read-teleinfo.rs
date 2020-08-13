@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use clap::{App, Arg, crate_version};
+use clap::{crate_version, App, Arg};
 use cron::Schedule;
 use log::debug;
 use serialport::prelude::*;
@@ -60,7 +60,7 @@ fn main() {
                 .short("c")
                 .long("config")
                 .takes_value(true)
-                .value_name("file")
+                .value_name("file"),
         )
         .get_matches();
 

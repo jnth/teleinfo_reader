@@ -12,7 +12,8 @@ pub mod schema;
 pub mod settings;
 
 pub fn establish_connection(settings: &Settings) -> PgConnection {
-    PgConnection::establish(&settings.database_url).expect(&format!("Error connecting to {}", settings.database_url))
+    PgConnection::establish(&settings.database_url)
+        .expect(&format!("Error connecting to {}", settings.database_url))
 }
 
 pub fn save_record_into_db(conn: &PgConnection, new_record: NewRecord) -> Record {

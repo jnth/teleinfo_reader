@@ -1,11 +1,11 @@
 extern crate diesel;
 extern crate teleinfo_reader;
 
-use clap::{App, Arg, crate_version};
 use self::diesel::prelude::*;
 use self::teleinfo_reader::*;
-use teleinfo_reader::settings::Settings;
+use clap::{crate_version, App, Arg};
 use teleinfo_reader::models::Record;
+use teleinfo_reader::settings::Settings;
 
 fn main() {
     use teleinfo_reader::schema::teleinfo::dsl::*;
@@ -22,7 +22,7 @@ fn main() {
                 .short("c")
                 .long("config")
                 .takes_value(true)
-                .value_name("file")
+                .value_name("file"),
         )
         .get_matches();
 

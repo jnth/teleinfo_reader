@@ -1,5 +1,5 @@
+use regex::{Captures, Regex};
 use std::env;
-use regex::{Regex, Captures};
 
 pub struct Settings {
     pub database_url: String,
@@ -26,16 +26,22 @@ impl Settings {
 
         // Regex to parse database url in order to hide password
         let pattern = Regex::new(r"postgres://(?P<user>[^:@]+)(:(?P<password>[^:@]+))?@(?P<host>[^:@/]+)(:(?P<port>\d+))?/(?P<dbname>[^:@/]+)").unwrap();
-        let masked = pattern.replace(&database_url, |caps: &Captures| {
-            match caps.name("port") {
-                Some(_port) => format!("postgres://{}@{}:{}/{}", &caps["user"], &caps["host"], &caps["port"], &caps["dbname"]),
-                None => format!("postgres://{}@{}/{}", &caps["user"], &caps["host"], &caps["dbname"]),
-            }
+        let masked = pattern.replace(&database_url, |caps: &Captures| match caps.name("port") {
+            Some(_port) => format!(
+                "postgres://{}@{}:{}/{}",
+                &caps["user"], &caps["host"], &caps["port"], &caps["dbname"]
+            ),
+            None => format!(
+                "postgres://{}@{}/{}",
+                &caps["user"], &caps["host"], &caps["dbname"]
+            ),
         });
 
         println!(" -> database_url: {}", &masked);
         println!(" -> serial_path: {}", &serial_path);
-        Settings { database_url, serial_path }
+        Settings {
+            database_url,
+            serial_path,
+        }
     }
 }
-
