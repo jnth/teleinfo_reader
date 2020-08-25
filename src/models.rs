@@ -8,14 +8,14 @@ use serde::Serialize;
 #[derive(Debug, Queryable, Serialize)]
 pub struct Record {
     id: i32,
-    dt_utc: NaiveDateTime,
-    adco: String,
-    hcjb: i64,
-    hpjb: i64,
-    hcjw: i64,
-    hpjw: i64,
-    hcjr: i64,
-    hpjr: i64,
+    pub dt_utc: NaiveDateTime,
+    pub adco: String,
+    pub hcjb: i64,
+    pub hpjb: i64,
+    pub hcjw: i64,
+    pub hpjw: i64,
+    pub hcjr: i64,
+    pub hpjr: i64,
 }
 
 impl fmt::Display for Record {
