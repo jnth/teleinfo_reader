@@ -1,15 +1,15 @@
+extern crate chrono_tz;
 extern crate diesel;
 extern crate teleinfo_reader;
-extern crate chrono_tz;
 
 use self::diesel::prelude::*;
 use self::teleinfo_reader::*;
 use chrono::prelude::*;
+use chrono::Utc;
+use chrono_tz::Europe::Paris;
 use clap::{crate_version, App, Arg};
 use teleinfo_reader::models::Record;
 use teleinfo_reader::settings::Settings;
-use chrono::Utc;
-use chrono_tz::Europe::Paris;
 
 fn main() {
     use teleinfo_reader::schema::teleinfo::dsl::*;
@@ -44,7 +44,6 @@ fn main() {
     if results.len() > 0 {
         println!("Last values saved in database:");
         for record in results {
-
             let khcjb = record.hcjb as f64 / 1000.;
             let khpjb = record.hpjb as f64 / 1000.;
             let khcjw = record.hcjw as f64 / 1000.;
@@ -54,8 +53,14 @@ fn main() {
             let utc = TimeZone::from_utc_datetime(&Utc, &record.dt_utc);
             let local = utc.with_timezone(&Paris);
 
-            println!(" Date/time -> UTC   | {}", record.dt_utc.format("%Y-%m-%d %H:%M:%S"));
-            println!("           -> Paris | {}", local.format("%Y-%m-%d %H:%M:%S"));
+            println!(
+                " Date/time -> UTC   | {}",
+                record.dt_utc.format("%Y-%m-%d %H:%M:%S")
+            );
+            println!(
+                "           -> Paris | {}",
+                local.format("%Y-%m-%d %H:%M:%S")
+            );
             println!("               ADCO | {}", record.adco);
             println!("      Bleu HC index | {} kWh", khcjb);
             println!("      Bleu HP index | {} kWh", khpjb);

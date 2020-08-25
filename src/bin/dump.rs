@@ -28,7 +28,7 @@ fn main() {
             Arg::with_name("output")
                 .help("Name of output file to create")
                 .required(true)
-                .index(1)
+                .index(1),
         )
         .get_matches();
 

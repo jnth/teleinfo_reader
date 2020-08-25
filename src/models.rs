@@ -2,8 +2,8 @@ use super::schema::teleinfo;
 use chrono::prelude::*;
 use log::warn;
 use regex::Regex;
-use std::fmt;
 use serde::Serialize;
+use std::fmt;
 
 #[derive(Debug, Queryable, Serialize)]
 pub struct Record {
