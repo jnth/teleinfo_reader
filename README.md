@@ -40,6 +40,16 @@ The configuration file path can be force to read a specific configuration. By de
 `/etc/read-teleinfo.conf` and `.env` file.
 
 
+### Dump data stored in database
+
+The `dump` command export all data stored in the PostgreSQL database in CSV format.
+
+Usage: `dump [-c file] output`
+
+The configuration file path can be force to read a specific configuration. By default, the script read
+`/etc/read-teleinfo.conf` and `.env` file. `output` is the output path.
+
+
 ## Test with the data generator
 
 Run the data generator script to create file socket and send data into it:

@@ -3,8 +3,9 @@ use chrono::prelude::*;
 use log::warn;
 use regex::Regex;
 use std::fmt;
+use serde::Serialize;
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, Serialize)]
 pub struct Record {
     id: i32,
     dt_utc: NaiveDateTime,
